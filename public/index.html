@@ -1,9 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LTI Button Test</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Select & Insert Image</title>
+    <style>
+      .option {
+        width: 200px;
+        margin: 10px;
+        cursor: pointer;
+        border: 2px solid #ccc;
+      }
+      .selected {
+        border-color: green;
+      }
+      #confirm {
+        display: none;
+        margin-top: 20px;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <h1>Choose an Image</h1>
+    <img
+      class="option"
+      src="https://images.unsplash.com/photo-1626808642875-0aa545482dfb?q=80&w=687"
+      data-title="Mountain View"
+      data-url="https://images.unsplash.com/photo-1626808642875-0aa545482dfb?q=80&w=687"
+    />
+    <img
+      class="option"
+      src="https://images.unsplash.com/photo-1751810906354-5e364657d468?q=80&w=1974"
+      data-title="Forest Trail"
+      data-url="https://images.unsplash.com/photo-1751810906354-5e364657d468?q=80&w=1974"
+    />
+
+    <button id="selectBtn" disabled>Select Image</button>
+
+    <div id="confirm">
+      <p id="preview"></p>
+      <button id="insertBtn">Insert into LMS</button>
+    </div>
+
+    <script>
+      const ltik = new URLSearchParams(window.location.search).get("ltik");
+      if (!ltik) console.error("Missing LTIK – expect 401");
+
+      let sel = null;
+      [...document.querySelectorAll(".option")].forEach((img) => {
+        img.addEventListener("click", () => {
+          document
+            .querySelectorAll(".option")
+            .forEach((i) => i.classList.remove("selected"));
+          img.classList.add("selected");
+          sel = img;
+          document.getElementById("selectBtn").disabled = false;
+        });
+      });
+
+      document.getElementById("selectBtn").addEventListener("click", () => {
+        document.getElementById("preview").innerText = sel.dataset.title;
+        document.getElementById("confirm").style.display = "block";
+      });
+
+      document
+        .getElementById("insertBtn")
+        .addEventListener("click", async () => {
+          const resp = await fetch("/deeplink", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${ltik}`,
+            },
+            body: JSON.stringify({
+              title: sel.dataset.title,
+              url: sel.dataset.url,
+            }),
+          });
+          const html = await resp.text();
+          document.body.insertAdjacentHTML("beforeend", html);
+        });
+    </script>
+  </body>
 </html>
