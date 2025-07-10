@@ -1,0 +1,29 @@
+{
+  "name": "lti-button-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node --env-file=.env --watch index.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "lti",
+    "lti-1.3",
+    "education",
+    "d2l",
+    "brightspace",
+    "launcher",
+    "authentication"
+  ],
+  "engines": {
+    "node": ">=21.0.0"
+  },
+  "author": "Kiran Mahajan",
+  "license": "MIT",
+  "packageManager": "pnpm@10.12.4",
+  "dependencies": {
+    "ltijs": "^5.9.7"
+  }
+}
